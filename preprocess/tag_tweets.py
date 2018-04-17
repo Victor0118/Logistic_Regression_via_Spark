@@ -25,7 +25,7 @@ def read_tweets(input_file, output_file):
 					'\xE2\x9C\x8C', '\xE2\x9D\xA4', '\xE2\x98\xBA', '\xE2\x99\xA5', '\xE3\x8A\x97']
 
 	sad_emoji = [':‑(', ':(', ':‑c', ':c', ':‑<', ':<', ':‑[', ':[', ':-||', '>:[', ':{', ':@', '>:(', ':\'‑(', ':\'(',
-				'DX', 'D=', 'D;', 'D8', 'D:', 'D:<', 'D‑\':', '>:O', '8‑0', ':-0', ':‑o', ':o', ':‑O', ':O', ':‑/', ':/', ':‑.',
+				'DX', 'D=', 'D;', 'D8', 'D:', 'D:<', 'D‑\':', '>:O', '8‑0', ':-0', ':‑o', ':o', ':‑O', ':O', ':‑/', ':‑.',
 				'>:\\', '>:/', ':\\', '=/', '=\\', ':L', '=L', ':S', ':‑|', ':|', ':$', '(-_-;)', 'Q_Q', 'QQ', 'TnT', 'T.T', 'Q.Q', ';;', 
 				';n;', ';-;', ';_;', '(T_T)', '(;_:)', '(ToT)', '(ー_ー)!!', '(-.-)', '(-_-)', '(=_=)', '(-"-)', '(ーー;)', '(*￣m￣)', '(＃ﾟДﾟ)',
 				'(´；ω；`)', 'ヽ(`Д´)ﾉ', '（ ´,_ゝ`)', 
@@ -44,14 +44,16 @@ def read_tweets(input_file, output_file):
 					record = json.loads(line)
 					if u'text' in record:
 						unicode_text = record[u'text']
+						if len(unicode_text) < 20:
+							continue
 						utf8text = unicode_text.encode("utf-8")
-						is_happy = find_emoji(utf8text, happy_emoji)
-						is_sad = find_emoji(utf8text, sad_emoji)
+						is_happy, happy_tag = find_emoji(utf8text, happy_emoji)
+						is_sad, sad_tag = find_emoji(utf8text, sad_emoji)
 						if is_happy and not is_sad:
-							output = {'text': utf8text, 'label': '1'}
+							output = {'text': utf8text, 'label': '1', 'emoji': happy_tag}
 							outf.write(json.dumps(output) + '\n')
 						elif not is_happy and is_sad:
-							output = {'text': utf8text, 'label': '0'}
+							output = {'text': utf8text, 'label': '0', 'emoji': sad_tag}
 							outf.write(json.dumps(output) + '\n')
 					else:
 						continue
@@ -63,8 +65,8 @@ def read_tweets(input_file, output_file):
 def find_emoji(text, emoji):
 	for e in emoji:
 		if e in text:
-			return True
-	return False
+			return True, e
+	return False, None
 
 def is_json(myjson):
   try:
@@ -79,9 +81,3 @@ if __name__ == '__main__':
 		exit(-1)
 	else:
 		read_tweets(sys.argv[1], sys.argv[2])
-	# t1 = threading.Thread(target= read_tweets, args=('/Users/choumasijia/Projects/cs651-project/example_tweets.json', 'ex_output.json',), name='Thread-A')
-	# t2 = threading.Thread(target= read_tweets, args=('/Users/choumasijia/Projects/cs651-project/two.json', 'two_output.json',), name='Thread-B')
-	# t1.start()
-	# t2.start()
-	# t1.join()
-	# t2.join()
