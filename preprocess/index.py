@@ -33,12 +33,12 @@ def index(input_file):
 def run(data_dir):
     files = [os.path.join(data_dir, f) for f in os.listdir(data_dir)]
     start = time.time()
-    pool = multiprocessing.Pool(4)
+    pool = multiprocessing.Pool(60)
     results = pool.map_async(index, files)
     pool.close()
     pool.join()
     print(time.time()-start)
 
 if __name__ == '__main__':
-    run("/home/w85yang/tweets_english/tagged")
+    run("/home/w85yang/preprocess/tagged")
 

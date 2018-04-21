@@ -216,7 +216,7 @@ def read_tweets(input_file):
     print("input_file: {}".format(input_file))
     with open(input_file, 'r') as inf:
         tweets = MyTweetTokenizer()
-        output_file = "{}.txt".format(input_file.split("/")[-1]) 
+        output_file = "tagged/{}.txt".format(input_file.split("/")[-1]) 
         with open(output_file, 'w', 100) as outf:
             for line in inf:
                 if is_json(line):
