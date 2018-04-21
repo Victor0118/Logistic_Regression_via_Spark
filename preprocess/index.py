@@ -20,7 +20,7 @@ def index(input_file):
                 if u'text' in record:
                     text = []
                     unicode_text = record[u'text']
-                    label = 'pos' if record[u'text'] == '1' else 'neg'
+                    label = 'pos' if record[u'label'] == '1' else 'neg'
                     unicode_text = unicode_text.lower()
                     for i in range(len(unicode_text)-4):
                         ngram = unicode_text[i:i+4]
