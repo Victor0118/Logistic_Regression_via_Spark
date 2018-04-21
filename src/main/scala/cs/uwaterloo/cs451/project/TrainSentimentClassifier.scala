@@ -37,10 +37,10 @@ object TrainSentimentClassifier {
     var inputFeature = textFile.map( line => {
       val tokens = line.split(" ")
       val docid = tokens(0)
-      val isSpam = if (tokens(1).trim().equals("pos")) 1 else 0
+      val pos = if (tokens(1).trim().equals("pos")) 1 else 0
       val features = tokens.slice(2, tokens.size).map(str=> str.toInt)
       val rand = scala.util.Random.nextInt
-      (0, (docid, isSpam, features, rand))
+      (0, (docid, pos, features, rand))
     })
 
     if (args.shuffle()) {
@@ -58,16 +58,16 @@ object TrainSentimentClassifier {
       val instances = pair._2
       instances.foreach(instance => {
         val docid = instance._1
-        val isSpam = instance._2
+        val pos = instance._2
         val features = instance._3
 
         val score = spamminess(features)
         val prob = 1.0 / (1 + math.exp(-score))
         features.foreach(f=> {
           if (w.contains(f)) {
-            w(f) += (isSpam - prob) * delta
+            w(f) += (pos - prob) * delta
           } else {
-            w(f) = (isSpam - prob) * delta
+            w(f) = (pos - prob) * delta
           }
         })
       })
