@@ -306,6 +306,7 @@ def run(path):
         for file in sorted(files):
             cmonth = file[:7]
             if cmonth != pmonth:
+                pmonth = cmonth
                 outf.close()
                 output_file = "{}.txt".format(cmonth)
                 outf = open(output_file, 'w')
