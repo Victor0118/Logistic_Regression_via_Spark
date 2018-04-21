@@ -3,6 +3,7 @@
 import json
 import sys
 import re
+import os
 
 import nltk.tokenize.casual as NLTK
 from nltk.corpus import stopwords
@@ -202,7 +203,7 @@ emoji_pattern = re.compile(
 
 # input_file: str
 # output_file: str
-def read_tweets(input_file, output_file):
+def read_tweets(input_file, outf):
     happy_emoji = [' :‑) ', ' :) ', ' :))', ' :)))', ' :-] ', ' :]', ' :-3', ':->', ':>', ' 8-)', ':-}', ':}', ' :o)', ' :c)', ' :^)', ' =]', ' =)', 
                     ' :‑D', ' :D', ' 8‑D', ' 8D ', ' x‑D', ' xD ', ' X‑D ', ' XD ', ' =D ', ' =3', ':-))', ':-)))', ':\'‑)', ':\')', 
                     ' :-*', ':*', ' :×', ' ;‑)', ' ;)', ' *-)', ' *)', ';‑]', ' ;]', ' ;^)', ' :‑,', ' ;D', ' :‑P', ' :P', ' X‑P', ' x‑p',
@@ -232,42 +233,41 @@ def read_tweets(input_file, output_file):
                 ]
     output = {}
 
+    print("input_file: {}".format(input_file))
     with open(input_file, 'r') as inf:
-        # buffer size = 100
-        with open(output_file, 'w', 100) as outf:
-            tweets = MyTweetTokenizer()
-            for line in inf:
-                if is_json(line):
-                    record = json.loads(line)
-                    if u'text' in record:
-                        unicode_text = record[u'text']
-                        if len(unicode_text) < 20:
-                            continue
-
-                        utf8text = unicode_text.encode("utf-8")
-                        is_happy, happy_tag, happy_clean_text = find_emoji(utf8text, happy_emoji)
-                        is_sad, sad_tag, sad_clean_text = find_emoji(utf8text, sad_emoji)
-
-                        if is_happy and not is_sad:
-                            clean_emoji_text = remove_emoji(happy_clean_text)     # remove emoji
-                            clean_text = tweets.clean(clean_emoji_text)          # remove others 
-                            clean_text = clean_text.replace("http://","").replace("https://","")
-                            if len(clean_text) >= 20:
-                                output = {'text': clean_text, 'label': '1', 'emoji': happy_tag}
-                                outf.write(json.dumps(output) + '\n')
-                            else:
-                                continue
-                        elif not is_happy and is_sad:
-                            clean_emoji_text = remove_emoji(sad_clean_text)
-                            clean_text = tweets.clean(clean_emoji_text)
-                            clean_text = clean_text.replace("http://","").replace("https://","")
-                            if len(clean_text) >= 20:
-                                output = {'text': clean_text, 'label': '0', 'emoji': sad_tag}
-                                outf.write(json.dumps(output) + '\n')
-                            else:
-                                continue
-                    else:
+        tweets = MyTweetTokenizer()
+        for line in inf:
+            if is_json(line):
+                record = json.loads(line)
+                if u'text' in record:
+                    unicode_text = record[u'text']
+                    if len(unicode_text) < 20:
                         continue
+
+                    utf8text = unicode_text.encode("utf-8")
+                    is_happy, happy_tag, happy_clean_text = find_emoji(utf8text, happy_emoji)
+                    is_sad, sad_tag, sad_clean_text = find_emoji(utf8text, sad_emoji)
+
+                    if is_happy and not is_sad:
+                        clean_emoji_text = remove_emoji(happy_clean_text)     # remove emoji
+                        clean_text = tweets.clean(clean_emoji_text)          # remove others 
+                        clean_text = clean_text.replace("http://","").replace("https://","")
+                        if len(clean_text) >= 20:
+                            output = {'text': clean_text, 'label': '1', 'emoji': happy_tag}
+                            outf.write(json.dumps(output) + '\n')
+                        else:
+                            continue
+                    elif not is_happy and is_sad:
+                        clean_emoji_text = remove_emoji(sad_clean_text)
+                        clean_text = tweets.clean(clean_emoji_text)
+                        clean_text = clean_text.replace("http://","").replace("https://","")
+                        if len(clean_text) >= 20:
+                            output = {'text': clean_text, 'label': '0', 'emoji': sad_tag}
+                            outf.write(json.dumps(output) + '\n')
+                        else:
+                            continue
+                else:
+                    continue
 
 
 # text: str
@@ -298,10 +298,21 @@ def is_json(myjson):
     return False
   return True
 
+def run(path):
+    output_file = "output.txt"
+    pmonth = ""
+    outf = open(output_file, 'w', 100)
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            cmonth = file[:7]
+            if cmonth != pmonth:
+                outf.close()
+                output_file = "{}.txt".format(cmonth)
+                outf = open(output_file, 'w')
+            read_tweets(os.path.join(root, file), outf)
+            
+    outf.close()   
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        exit(-1)
-    else:
-        read_tweets(sys.argv[1], sys.argv[2])
+    run("/home/p8shi/tweets_english")
 
