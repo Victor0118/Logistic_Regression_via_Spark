@@ -12,7 +12,7 @@ def index(input_file):
     print("input_file: {}".format(input_file))
     with open(input_file, 'r') as inf:
         date = input_file.split("/")[-1].split(".")[0]
-        output_file = "{}.indexed".format(date) 
+        output_file = "indexed/{}.indexed".format(date) 
         with open(output_file, 'w', 100) as outf:
             num = 1
             for line in inf:
