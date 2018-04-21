@@ -303,7 +303,7 @@ def run(path):
     pmonth = ""
     outf = open(output_file, 'w', 100)
     for root, dirs, files in os.walk(path):
-        for file in files:
+        for file in sorted(files):
             cmonth = file[:7]
             if cmonth != pmonth:
                 outf.close()
