@@ -1,4 +1,4 @@
-# tweets_sentiment
+# Running Instruction
 
 ## GD
 
@@ -45,14 +45,24 @@ spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimen
 ```
 Test MBSGD
 ```
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier target/project-1.0.jar --input /shared/au/small_test_shuf.txt --model small_train_shuf_bgd --output small_test_output_mbsgd 
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier 
+             target/project-1.0.jar --input /shared/au/small_test_shuf.txt 
+             --model small_train_shuf_bgd --output small_test_output_mbsgd 
 
 sh ./eval_hdfs.sh small_test_output_mbsgd
  ```
 
-# Performance of Regularization 
+# Performance of Learning Rate (delta) 
 
-|         | SGD         | MBSGD         | SGD         |
+|     delta    | SGD         | MBSGD         | SGD         |
+| ------------- |:-------------:|:-------------:|:-------------:|
+|   0.002    | 0.7424 | 
+
+
+
+# Performance of Regularization (lambda)
+
+|     lambda    | SGD         | MBSGD         | SGD         |
 | ------------- |:-------------:|:-------------:|:-------------:|
 |   0.0    | 0.7424 |
 |   0.00001    | 0.7423 |
@@ -61,7 +71,6 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 |   0.005    | 0.7438 |
 |   0.01    | 0.7429 |
 |   0.05    | 0.7426 |
-
 
 
 # Data Statistics
