@@ -3,7 +3,6 @@ package ca.uwaterloo.cs451.project
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.log4j.Logger
 import org.apache.spark.{SparkConf, SparkContext}
-import org.rogach.scallop._
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -49,18 +48,20 @@ object TrainSentimentClassifierGD {
       val gradient = inputFeature.mapPartitions(partition => {
         val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
         val g = scala.collection.mutable.Map[Int, Double]()
-        def spamminess(features: Array[Int]): Double = {
+
+        def sentiment(features: Array[Int]): Double = {
           var score = 0d
           features.foreach(f => if (w.value.contains(f)) score += w.value(f))
           score
         }
+
         val delta = 0.002
         partition.foreach(pair => {
           val instance = pair._2
           val docid = instance._1
           val pos = instance._2
           val features = instance._3
-          val score = spamminess(features)
+          val score = sentiment(features)
           val prob = 1.0 / (1 + math.exp(-score))
           features.foreach(f => {
             if (g.contains(f)) {

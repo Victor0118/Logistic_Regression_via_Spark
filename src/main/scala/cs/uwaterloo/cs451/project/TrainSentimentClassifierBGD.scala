@@ -50,7 +50,7 @@ object TrainSentimentClassifierBGD {
       val gradient = inputFeature.sample(false, 0.01).mapPartitions(partition => {
         val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
         val g = scala.collection.mutable.Map[Int, Double]()
-        def spamminess(features: Array[Int]): Double = {
+        def sentiment(features: Array[Int]): Double = {
           var score = 0d
           features.foreach(f => if (w.value.contains(f)) score += w.value(f))
           score
@@ -61,7 +61,7 @@ object TrainSentimentClassifierBGD {
           val docid = instance._1
           val pos = instance._2
           val features = instance._3
-          val score = spamminess(features)
+          val score = sentiment(features)
           val prob = 1.0 / (1 + math.exp(-score))
           features.foreach(f => {
             if (g.contains(f)) {
