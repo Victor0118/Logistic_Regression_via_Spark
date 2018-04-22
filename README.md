@@ -17,7 +17,7 @@ sh ./eval_hdfs.sh small_test_output_gd
 
 Train SGD
 ```
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifier target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model small_train_shuf_sgd --epoch 5
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierSGD target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model small_train_shuf_sgd --epoch 5
 ```
 
 Test SGD
@@ -56,3 +56,4 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 
 * http://theory.stanford.edu/~tim/s16/l/l6.pdf
 * https://spark.apache.org/docs/latest/mllib-linear-methods.html
+* https://github.com/apache/spark/tree/master/mllib/src/main/scala/org/apache/spark/mllib/optimization
