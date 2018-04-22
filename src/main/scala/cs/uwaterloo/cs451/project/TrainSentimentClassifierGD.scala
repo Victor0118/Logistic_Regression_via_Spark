@@ -21,6 +21,7 @@ object TrainSentimentClassifierGD {
     log.info("Shuffle: " + args.shuffle())
     log.info("epoch: " + args.epoch().toString())
     log.info("fraction: " + args.fraction().toString())
+    log.info("regularization: " + args.regularization().toString())
 
     val conf = new SparkConf().setAppName("TrainerGD")
     val sc = new SparkContext(conf)

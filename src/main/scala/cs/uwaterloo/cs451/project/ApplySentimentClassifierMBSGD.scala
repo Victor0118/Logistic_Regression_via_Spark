@@ -21,6 +21,7 @@ object TrainSentimentClassifierMBSGD {
     log.info("Model: " + args.model())
     log.info("Shuffle: " + args.shuffle())
     log.info("epoch: " + args.epoch().toString())
+    log.info("regularization: " + args.regularization().toString())
 
     val conf = new SparkConf().setAppName("TrainerMBSGD")
     val sc = new SparkContext(conf)
@@ -65,9 +66,9 @@ object TrainSentimentClassifierMBSGD {
           val prob = 1.0 / (1 + math.exp(-score))
           features.foreach(f => {
             if (g.contains(f)) {
-              g(f) += (pos - prob) * delta
+              g(f) += (pos - prob + 2 * w(f) * args.regularization()) * delta
             } else {
-              g(f) = (pos - prob) * delta
+              g(f) = (pos - prob + 2 * w(f) * args.regularization()) * delta
             }
           })
 
