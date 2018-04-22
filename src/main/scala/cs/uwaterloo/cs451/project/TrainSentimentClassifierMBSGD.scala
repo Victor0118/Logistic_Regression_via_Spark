@@ -21,6 +21,9 @@ object TrainSentimentClassifierMBSGD {
     log.info("Model: " + args.model())
     log.info("Shuffle: " + args.shuffle())
     log.info("epoch: " + args.epoch().toString())
+    log.info("regularization: " + args.regularization().toString())
+    log.info("fraction: " + args.fraction().toString())
+    log.info("lr: " + args.lr().toString())
 
     val conf = new SparkConf().setAppName("TrainerMBSGD")
     val sc = new SparkContext(conf)
@@ -45,6 +48,8 @@ object TrainSentimentClassifierMBSGD {
     }
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
+    val reg = args.regularization()
+    val delta = args.lr()
 
     for (iter <- 1 to (args.epoch() * 1.0 / args.fraction()).toInt) {
       val w = sc.broadcast(w_total)
@@ -57,7 +62,6 @@ object TrainSentimentClassifierMBSGD {
           features.foreach(f => if (w.value.contains(f)) score += w.value(f))
           score
         }
-        val delta = 0.002
         partition.foreach(pair => {
           val instance = pair._2
           val docid = instance._1
@@ -67,9 +71,9 @@ object TrainSentimentClassifierMBSGD {
           val prob = 1.0 / (1 + math.exp(-score))
           features.foreach(f => {
             if (g.contains(f)) {
-              g(f) += (pos - prob) * delta
+              g(f) += (pos - prob - 2.0 * w.value.getOrElse(f, 0.0) * reg) * delta
             } else {
-              g(f) = (pos - prob) * delta
+              g(f) = (pos - prob - 2.0 * w.value.getOrElse(f, 0.0) * reg) * delta
             }
           })
 
