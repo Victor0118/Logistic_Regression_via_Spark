@@ -73,7 +73,7 @@ object TrainSentimentClassifierGD {
             if (g.contains(f)) {
               g(f) += (pos - prob + 2 * w.value(f) * reg) * delta
             } else {
-              g(f) = (pos - prob + 2 * w.value(f) * reg) * delta
+              g(f) = (pos - prob + 2 * w.value.getOrElse(f, 0) * reg) * delta
             }
           })
 

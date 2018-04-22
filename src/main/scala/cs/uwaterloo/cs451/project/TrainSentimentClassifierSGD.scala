@@ -80,7 +80,7 @@ object TrainSentimentClassifierSGD {
             if (w.contains(f)) {
               w(f) += (pos - prob + 2 * w(f) * reg) * delta
             } else {
-              w(f) = (pos - prob + 2 * w(f) * reg) * delta
+              w(f) = (pos - prob) * delta
             }
           })
         })
