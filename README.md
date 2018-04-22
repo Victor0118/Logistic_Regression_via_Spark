@@ -1,19 +1,43 @@
 # tweets_sentiment
 
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD \
- target/project-1.0.jar --input /shared/au/small_train.txt \
- --model cs451-small-train-model
+## SGD 
+
+Train SGD
+```
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifier target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model small_train_shuf_sgd
+```
+
+Test SGD
+```
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier target/project-1.0.jar --input /shared/au/small_test_shuf.txt --model small_train_shuf_sgd --output small_test_output_sgd
+
+sh ./eval_hdfs.sh small_test_output_sgd
+```
  
+## GD
+
+Train GD
+```
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model small_train_shuf_gd
+```
+Test GD
+```
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier target/project-1.0.jar --input /shared/au/small_test_shuf.txt --model small_train_shuf_gd --output small_test_output_gd
+
+sh ./eval_hdfs.sh small_test_output_gd
+ ```
  
- ## GD
+ ## BGD
  
  Train GD
- ```
- spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model small_train_shuf_gd
- ```
- Test GD
- ```
- spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifierGD target/project-1.0.jar --input /shared/au/small_test_shuf.txt --model small_train_shuf_gd --output small_test_output_gd
+```
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierBGD target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model small_train_shuf_bgd
+```
+Test GD
+```
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier target/project-1.0.jar --input /shared/au/small_test_shuf.txt --model small_train_shuf_bgd --output small_test_output_bgd
+
+sh ./eval_hdfs.sh small_test_output_bgd
  ```
 
 
