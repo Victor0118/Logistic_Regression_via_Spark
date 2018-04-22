@@ -55,6 +55,7 @@ object TrainSentimentClassifierSGD {
     }
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
+    val reg = args.regularization()
 
     for (iter <- 1 to args.epoch()) {
       var trained = inputFeature.groupByKey(1).flatMap(pair => {
@@ -77,9 +78,9 @@ object TrainSentimentClassifierSGD {
           val prob = 1.0 / (1 + math.exp(-score))
           features.foreach(f => {
             if (w.contains(f)) {
-              w(f) += (pos - prob + 2 * w(f) * args.regularization()) * delta
+              w(f) += (pos - prob + 2 * w(f) * reg) * delta
             } else {
-              w(f) = (pos - prob + 2 * w(f) * args.regularization()) * delta
+              w(f) = (pos - prob + 2 * w(f) * reg) * delta
             }
           })
         })

@@ -46,6 +46,7 @@ object TrainSentimentClassifierMBSGD {
     }
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
+    val reg = args.regularization()
 
     for (iter <- 1 to (args.epoch() * 1.0 / args.fraction()).toInt) {
       val w = sc.broadcast(w_total)
@@ -68,9 +69,9 @@ object TrainSentimentClassifierMBSGD {
           val prob = 1.0 / (1 + math.exp(-score))
           features.foreach(f => {
             if (g.contains(f)) {
-              g(f) += (pos - prob + 2 * w.value(f) * args.regularization()) * delta
+              g(f) += (pos - prob + 2 * w.value(f) * reg) * delta
             } else {
-              g(f) = (pos - prob + 2 * w.value(f) * args.regularization()) * delta
+              g(f) = (pos - prob + 2 * w.value(f) * reg) * delta
             }
           })
 
