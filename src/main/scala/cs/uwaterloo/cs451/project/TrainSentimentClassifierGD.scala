@@ -39,6 +39,8 @@ object TrainSentimentClassifierGD {
       (0, (docid, pos, features, rand))
     })
 
+    val train_size = inputFeature.count() * 1.0
+
     if (args.shuffle()) {
       inputFeature = inputFeature.sortBy(pair => pair._2._4)
     }
@@ -81,9 +83,9 @@ object TrainSentimentClassifierGD {
       ).collect().foreach(g => {
         g.keys.foreach(f => {
           if (w_total.contains(f)) {
-            w_total(f) += g(f)
+            w_total(f) += g(f) / train_size
           } else {
-            w_total(f) = g(f)
+            w_total(f) = g(f) / train_size
           }
         })
       }

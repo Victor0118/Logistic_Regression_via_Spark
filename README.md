@@ -17,7 +17,7 @@ sh ./eval_hdfs.sh small_test_output_gd
 
 Train SGD
 ```
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifier target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model small_train_shuf_sgd --epoch 5
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierSGD target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model small_train_shuf_sgd --epoch 5
 ```
 
 Test SGD
@@ -37,7 +37,7 @@ Test MBSGD
 ```
 spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier target/project-1.0.jar --input /shared/au/small_test_shuf.txt --model small_train_shuf_bgd --output small_test_output_mbsgd 
 
-sh ./eval_hdfs.sh small_test_output_bgd
+sh ./eval_hdfs.sh small_test_output_mbsgd
  ```
 
 
@@ -48,5 +48,12 @@ sh ./eval_hdfs.sh small_test_output_bgd
 | File Size      | 25G | 6.1G | 361 M| 73 M|
 | Avg \# of Characters     |  |  | | |
 | Avg \# of Terms     |  |  | | |
-| \# of Pos       | 33,870,264 | 8,467,134 | 500206 | 99918 |
-| \# of Neg      | 33,869,640   |   8,467,758 | 499794 | 100082 |
+| \# of Pos       | 33,870,264 | 8,467,134 | 500,206 | 99,918 |
+| \# of Neg      | 33,869,640   |   8,467,758 | 499,794 | 100,082 |
+
+
+# Reference
+
+* http://theory.stanford.edu/~tim/s16/l/l6.pdf
+* https://spark.apache.org/docs/latest/mllib-linear-methods.html
+* https://github.com/apache/spark/tree/master/mllib/src/main/scala/org/apache/spark/mllib/optimization

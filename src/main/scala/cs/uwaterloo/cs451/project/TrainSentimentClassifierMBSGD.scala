@@ -39,6 +39,8 @@ object TrainSentimentClassifierMBSGD {
       (0, (docid, pos, features, rand))
     })
 
+    val batch_size = (inputFeature.count() * args.fraction()).toInt * 1.0
+
     if (args.shuffle()) {
       inputFeature = inputFeature.sortBy(pair => pair._2._4)
     }
@@ -79,9 +81,9 @@ object TrainSentimentClassifierMBSGD {
       ).collect().foreach(g => {
         g.keys.foreach(f => {
           if (w_total.contains(f)) {
-            w_total(f) += g(f)
+            w_total(f) += g(f) / batch_size
           } else {
-            w_total(f) = g(f)
+            w_total(f) = g(f) / batch_size
           }
         })
       }
