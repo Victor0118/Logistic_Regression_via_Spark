@@ -43,43 +43,46 @@ object TrainSentimentClassifierBGD {
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
 
-    for (iter <- 1 to 10) {
-      val gradient = inputFeature.foreachPartition(partition => {
-        val w = sc.broadcast(w_total)
-        val gs = partition.map(
-          pair => {
-            val g = scala.collection.mutable.Map[Int, Double]()
-            def spamminess(features: Array[Int]): Double = {
-              var score = 0d
-              features.foreach(f => if (w.value.contains(f)) score += w.value(f))
-              score
-            }
-            val delta = 0.002
-            val instance = pair._2
-            val docid = instance._1
-            val pos = instance._2
-            val features = instance._3
-            val score = spamminess(features)
-            val prob = 1.0 / (1 + math.exp(-score))
-            features.foreach(f => {
-              if (g.contains(f)) {
-                g(f) += (pos - prob) * delta
-              } else {
-                g(f) = (pos - prob) * delta
-              }
-            })
-            g
-          })
-        gs.foreach(g => {
-          g.keys.foreach(f => {
-            if (w_total.contains(f)) {
-              w_total(f) += g(f)
+
+    for (iter <- 1 to 1000) {
+      val w = sc.broadcast(w_total)
+
+      val gradient = inputFeature.sample(false, 0.01).mapPartitions(partition => {
+        val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
+        val g = scala.collection.mutable.Map[Int, Double]()
+        def spamminess(features: Array[Int]): Double = {
+          var score = 0d
+          features.foreach(f => if (w.value.contains(f)) score += w.value(f))
+          score
+        }
+        val delta = 0.002
+        partition.foreach(pair => {
+          val instance = pair._2
+          val docid = instance._1
+          val pos = instance._2
+          val features = instance._3
+          val score = spamminess(features)
+          val prob = 1.0 / (1 + math.exp(-score))
+          features.foreach(f => {
+            if (g.contains(f)) {
+              g(f) += (pos - prob) * delta
             } else {
-              w_total(f) = g(f)
+              g(f) = (pos - prob) * delta
             }
           })
+
+        })
+        buffer.+=(g)
+        buffer.iterator
+      }
+      ).collect().foreach(g => {
+        g.keys.foreach(f => {
+          if (w_total.contains(f)) {
+            w_total(f) += g(f)
+          } else {
+            w_total(f) = g(f)
           }
-        )
+        })
       }
       )
     }
