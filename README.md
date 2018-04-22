@@ -6,7 +6,7 @@ Train GD
 ```
 spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD 
              target/project-1.0.jar --input /shared/au/small_train_shuf.txt 
-             --model small_train_shuf_gd --epoch 5 --regularization 0.0001 --lr 0.002
+             --model small_train_shuf_gd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.00001
 ```
 Test GD
 ```
@@ -23,7 +23,7 @@ Train SGD
 ```
 spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierSGD
              target/project-1.0.jar --input /shared/au/small_train_shuf.txt 
-             --model small_train_shuf_sgd --epoch 5 --regularization 0.0001 --lr 0.002
+             --model small_train_shuf_sgd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.00001
 ```
 
 Test SGD
@@ -41,7 +41,7 @@ sh ./eval_hdfs.sh small_test_output_sgd
 ```
 spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierMBSGD 
              target/project-1.0.jar --input /shared/au/small_train_shuf.txt 
-             --model small_train_shuf_mbsgd --epoch 5 --regularization 0.0001 --lr 0.002
+             --model small_train_shuf_mbsgd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.00001
 ```
 Test MBSGD
 ```
@@ -52,7 +52,17 @@ spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimen
 sh ./eval_hdfs.sh small_test_output_mbsgd
  ```
 
-# Performance of Learning Rate (delta) 
+# Parameter Test on Batch Size (fraction) 
+
+|     fraction    | SGD         | MBSGD         | GD         |
+| ------------- |:-------------:|:-------------:|:-------------:|
+|   0.05    | 0.7424 | 
+|   0.001    |  | 
+|   0.0001    |  | 
+|   0.00001    |  | 
+
+
+# Parameter Test on Learning Rate (delta) 
 
 |     delta    | SGD         | MBSGD         | GD         |
 | ------------- |:-------------:|:-------------:|:-------------:|
@@ -62,7 +72,7 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 
 
 
-# Performance of Regularization (lambda)
+# Parameter Test on Regularization (lambda)
 
 |     lambda    | SGD         | MBSGD         | GD         |
 | ------------- |:-------------:|:-------------:|:-------------:|
