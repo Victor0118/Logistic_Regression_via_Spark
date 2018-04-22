@@ -78,7 +78,7 @@ object TrainSentimentClassifierSGD {
           val prob = 1.0 / (1 + math.exp(-score))
           features.foreach(f => {
             if (w.contains(f)) {
-              w(f) += (pos - prob + 2 * w(f) * reg) * delta
+              w(f) += (pos - prob + 2.0 * w(f) * reg) * delta
             } else {
               w(f) = (pos - prob) * delta
             }
