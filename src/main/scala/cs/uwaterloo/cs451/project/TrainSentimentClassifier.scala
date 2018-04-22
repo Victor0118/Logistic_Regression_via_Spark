@@ -5,6 +5,8 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 import org.rogach.scallop._
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by shipeng on 18-3-25.
   */
@@ -14,6 +16,8 @@ class Conf_Trainer(args: Seq[String]) extends ScallopConf(args) {
   val input = opt[String](descr = "input path", required = true)
   val model = opt[String](descr = "output path", required = true)
   val shuffle = opt[Boolean](required = false, default = Some(false))
+  val epoch = opt[Int](required = false, default = Some(10))
+  val fraction = opt[Double](required = false, default = Some(0.01))
   verify()
 }
 
@@ -26,6 +30,7 @@ object TrainSentimentClassifier {
     log.info("Input: " + args.input())
     log.info("Model: " + args.model())
     log.info("Shuffle: " + args.shuffle())
+    log.info("epoch: " + args.epoch().toString())
 
     val conf = new SparkConf().setAppName("Trainer")
     val sc = new SparkContext(conf)
@@ -47,34 +52,49 @@ object TrainSentimentClassifier {
       inputFeature = inputFeature.sortBy(pair=>pair._2._4)
     }
 
-    val trained = inputFeature.groupByKey(1).flatMap(pair=> {
-      val w = scala.collection.mutable.Map[Int, Double]()
-      def spamminess(features: Array[Int]) : Double = {
-        var score = 0d
-        features.foreach(f=> if (w.contains(f)) score += w(f))
-        score
-      }
-      val delta = 0.002
-      val instances = pair._2
-      instances.foreach(instance => {
-        val docid = instance._1
-        val pos = instance._2
-        val features = instance._3
+    var w_total = scala.collection.mutable.Map[Int, Double]()
 
-        val score = spamminess(features)
-        val prob = 1.0 / (1 + math.exp(-score))
-        features.foreach(f=> {
-          if (w.contains(f)) {
-            w(f) += (pos - prob) * delta
+    for (iter <- 1 to args.iteration()) {
+      var trained = inputFeature.groupByKey(1).flatMap(pair => {
+        val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
+        val w = scala.collection.mutable.Map[Int, Double]()
+        def sentiment(features: Array[Int]): Double = {
+          var score = 0d
+          features.foreach(f => if (w.contains(f)) score += w(f))
+          score
+        }
+
+        val delta = 0.002
+        val instances = pair._2
+        instances.foreach(instance => {
+          val docid = instance._1
+          val pos = instance._2
+          val features = instance._3
+
+          val score = sentiment(features)
+          val prob = 1.0 / (1 + math.exp(-score))
+          features.foreach(f => {
+            if (w.contains(f)) {
+              w(f) += (pos - prob) * delta
+            } else {
+              w(f) = (pos - prob) * delta
+            }
+          })
+        })
+        buffer.+=(w)
+        buffer.iterator
+      }).collect().foreach(g => {
+        g.keys.foreach(f => {
+          if (w_total.contains(f)) {
+            w_total(f) += g(f)
           } else {
-            w(f) = (pos - prob) * delta
+            w_total(f) = g(f)
           }
         })
-      })
-      w
-    })
-
-    trained.saveAsTextFile(args.model())
+      }
+      )
+    }
+    sc.parallelize(w_total.toSeq).coalesce(1).saveAsTextFile(args.model())
 
   }
 }
