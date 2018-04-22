@@ -22,6 +22,7 @@ object TrainSentimentClassifierGD {
     log.info("epoch: " + args.epoch().toString())
     log.info("fraction: " + args.fraction().toString())
     log.info("regularization: " + args.regularization().toString())
+    log.info("lr: " + args.lr().toString())
 
     val conf = new SparkConf().setAppName("TrainerGD")
     val sc = new SparkContext(conf)
@@ -47,6 +48,7 @@ object TrainSentimentClassifierGD {
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
     val reg = args.regularization()
+    val delta = 0.002
 
     for (iter <- 1 to args.epoch()) {
       val w = sc.broadcast(w_total)
@@ -61,7 +63,6 @@ object TrainSentimentClassifierGD {
           score
         }
 
-        val delta = 0.002
         partition.foreach(pair => {
           val instance = pair._2
           val docid = instance._1

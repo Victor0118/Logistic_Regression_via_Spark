@@ -18,6 +18,7 @@ class Conf_Trainer(args: Seq[String]) extends ScallopConf(args) {
   val shuffle = opt[Boolean](required = false, default = Some(false))
   val epoch = opt[Int](required = false, default = Some(10))
   val fraction = opt[Double](required = false, default = Some(0.01))
+  val lr = opt[Double](required = false, default = Some(0.002))
   val regularization = opt[Double](required = false, default = Some(0.0))
   verify()
 }
@@ -33,6 +34,7 @@ object TrainSentimentClassifierSGD {
     log.info("Shuffle: " + args.shuffle())
     log.info("epoch: " + args.epoch().toString())
     log.info("regularization: " + args.regularization().toString())
+    log.info("lr: " + args.lr().toString())
 
     val conf = new SparkConf().setAppName("TrainerSGD")
     val sc = new SparkContext(conf)
@@ -56,6 +58,7 @@ object TrainSentimentClassifierSGD {
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
     val reg = args.regularization()
+    val delta = args.lr()
 
     for (iter <- 1 to args.epoch()) {
       var trained = inputFeature.groupByKey(1).flatMap(pair => {
@@ -67,7 +70,6 @@ object TrainSentimentClassifierSGD {
           score
         }
 
-        val delta = 0.002
         val instances = pair._2
         instances.foreach(instance => {
           val docid = instance._1
