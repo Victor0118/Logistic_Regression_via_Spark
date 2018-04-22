@@ -20,6 +20,7 @@ object TrainSentimentClassifierBGD {
     log.info("Input: " + args.input())
     log.info("Model: " + args.model())
     log.info("Shuffle: " + args.shuffle())
+    log.info("epoch: " + args.epoch().toString())
 
     val conf = new SparkConf().setAppName("TrainerBGD")
     val sc = new SparkContext(conf)
@@ -43,11 +44,10 @@ object TrainSentimentClassifierBGD {
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
 
-
-    for (iter <- 1 to 1000) {
+    for (iter <- 1 to args.epoch() * 1.0 / args.fraction()) {
       val w = sc.broadcast(w_total)
 
-      val gradient = inputFeature.sample(false, 0.01).mapPartitions(partition => {
+      val gradient = inputFeature.sample(false, args.fraction()).mapPartitions(partition => {
         val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
         val g = scala.collection.mutable.Map[Int, Double]()
         def sentiment(features: Array[Int]): Double = {

@@ -19,6 +19,8 @@ object TrainSentimentClassifierGD {
     log.info("Input: " + args.input())
     log.info("Model: " + args.model())
     log.info("Shuffle: " + args.shuffle())
+    log.info("epoch: " + args.epoch().toString())
+    log.info("fraction: " + args.fraction().toString())
 
     val conf = new SparkConf().setAppName("TrainerGD")
     val sc = new SparkContext(conf)
@@ -42,7 +44,7 @@ object TrainSentimentClassifierGD {
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
 
-    for (iter <- 1 to 10) {
+    for (iter <- 1 to args.epoch()) {
       val w = sc.broadcast(w_total)
 
       val gradient = inputFeature.mapPartitions(partition => {

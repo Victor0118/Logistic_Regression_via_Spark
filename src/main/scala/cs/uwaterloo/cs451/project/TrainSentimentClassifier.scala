@@ -16,6 +16,8 @@ class Conf_Trainer(args: Seq[String]) extends ScallopConf(args) {
   val input = opt[String](descr = "input path", required = true)
   val model = opt[String](descr = "output path", required = true)
   val shuffle = opt[Boolean](required = false, default = Some(false))
+  val epoch = opt[Int](required = false, default = Some(10))
+  val fraction = opt[Double](required = false, default = Some(0.01))
   verify()
 }
 
@@ -28,6 +30,7 @@ object TrainSentimentClassifier {
     log.info("Input: " + args.input())
     log.info("Model: " + args.model())
     log.info("Shuffle: " + args.shuffle())
+    log.info("epoch: " + args.epoch().toString())
 
     val conf = new SparkConf().setAppName("Trainer")
     val sc = new SparkContext(conf)
@@ -51,7 +54,7 @@ object TrainSentimentClassifier {
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
 
-    for (iter <- 1 to 10) {
+    for (iter <- 1 to args.iteration()) {
       var trained = inputFeature.groupByKey(1).flatMap(pair => {
         val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
         val w = scala.collection.mutable.Map[Int, Double]()
