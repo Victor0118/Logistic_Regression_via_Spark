@@ -78,7 +78,7 @@ object TrainSentimentClassifierGD {
           }
         })
         g2
-      }).collect()
+      }, 1)//.collect()
 
       gradient.foreach(x => {
         x._2.foreach(f => if (w_total.contains(f._1)) {
