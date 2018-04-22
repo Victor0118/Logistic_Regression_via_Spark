@@ -18,11 +18,12 @@ class Conf_Trainer(args: Seq[String]) extends ScallopConf(args) {
   val shuffle = opt[Boolean](required = false, default = Some(false))
   val epoch = opt[Int](required = false, default = Some(10))
   val fraction = opt[Double](required = false, default = Some(0.01))
+  val regularization = opt[Double](required = false, default = Some(0.0))
   verify()
 }
 
 
-object TrainSentimentClassifier {
+object TrainSentimentClassifierSGD {
   val log = Logger.getLogger(getClass().getName())
 
   def main(argv: Array[String]) {
@@ -32,7 +33,7 @@ object TrainSentimentClassifier {
     log.info("Shuffle: " + args.shuffle())
     log.info("epoch: " + args.epoch().toString())
 
-    val conf = new SparkConf().setAppName("Trainer")
+    val conf = new SparkConf().setAppName("TrainerSGD")
     val sc = new SparkContext(conf)
     val textFile = sc.textFile(args.input())
     val outputDir = new Path(args.model())
