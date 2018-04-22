@@ -1,12 +1,12 @@
 # Running Instruction
 
-## GD
+### GD
 
 Train GD
 ```
 spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD \
              target/project-1.0.jar --input /shared/au/small_train_shuf.txt \
-             --model small_train_shuf_gd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.00001
+             --model small_train_shuf_gd --epoch 5 --regularization 0.0001 --lr 0.002
 ```
 Test GD
 ```
@@ -17,13 +17,13 @@ spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimen
 sh ./eval_hdfs.sh small_test_output_gd
  ```
  
-## SGD 
+### SGD 
 
 Train SGD
 ```
 spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierSGD \
              target/project-1.0.jar --input /shared/au/small_train_shuf.txt \
-             --model small_train_shuf_sgd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.00001
+             --model small_train_shuf_sgd --epoch 5 --regularization 0.0001 --lr 0.002
 ```
 
 Test SGD
@@ -35,7 +35,7 @@ spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimen
 sh ./eval_hdfs.sh small_test_output_sgd
 ```
  
- ## MBSGD
+ ### MBSGD
  
  Train MBSGD
 ```
@@ -54,9 +54,9 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 
 # Parameter Test on Batch Size (fraction) 
 
-|     fraction    | SGD         | MBSGD         | GD         |
-| ------------- |:-------------:|:-------------:|:-------------:|
-|   0.05    | 0.7424 | 
+|     fraction   | MBSGD         |
+| ------------- |:-------------:|
+|   0.05    |  | 
 |   0.001    |  | 
 |   0.0001    |  | 
 |   0.00001    |  | 
@@ -66,6 +66,7 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 
 |     delta    | SGD         | MBSGD         | GD         |
 | ------------- |:-------------:|:-------------:|:-------------:|
+|   0.001    | 0.7404 | 
 |   0.002    | 0.7424 | 
 |   0.005    | 0.7442 | 
 |   0.02    | 0.7302 | 
@@ -83,6 +84,8 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 |   0.005    | 0.7438 |
 |   0.01    | 0.7429 |
 |   0.05    | 0.7426 |
+|   0.5    | 0.7309 |
+
 
 
 # Data Statistics
