@@ -4,14 +4,14 @@
 
 Train GD
 ```
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD 
-             target/project-1.0.jar --input /shared/au/small_train_shuf.txt 
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD \
+             target/project-1.0.jar --input /shared/au/small_train_shuf.txt \
              --model small_train_shuf_gd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.00001
 ```
 Test GD
 ```
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier 
-             target/project-1.0.jar --input /shared/au/small_test_shuf.txt 
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier \
+             target/project-1.0.jar --input /shared/au/small_test_shuf.txt \
              --model small_train_shuf_gd --output small_test_output_gd 
 
 sh ./eval_hdfs.sh small_test_output_gd
@@ -21,15 +21,15 @@ sh ./eval_hdfs.sh small_test_output_gd
 
 Train SGD
 ```
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierSGD
-             target/project-1.0.jar --input /shared/au/small_train_shuf.txt 
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierSGD \
+             target/project-1.0.jar --input /shared/au/small_train_shuf.txt \
              --model small_train_shuf_sgd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.00001
 ```
 
 Test SGD
 ```
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier 
-             target/project-1.0.jar --input /shared/au/small_test_shuf.txt 
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier \
+             target/project-1.0.jar --input /shared/au/small_test_shuf.txt \
              --model small_train_shuf_sgd --output small_test_output_sgd 
 
 sh ./eval_hdfs.sh small_test_output_sgd
@@ -39,14 +39,14 @@ sh ./eval_hdfs.sh small_test_output_sgd
  
  Train MBSGD
 ```
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierMBSGD 
-             target/project-1.0.jar --input /shared/au/small_train_shuf.txt 
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierMBSGD \
+             target/project-1.0.jar --input /shared/au/small_train_shuf.txt \
              --model small_train_shuf_mbsgd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.00001
 ```
 Test MBSGD
 ```
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier 
-             target/project-1.0.jar --input /shared/au/small_test_shuf.txt 
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier \
+             target/project-1.0.jar --input /shared/au/small_test_shuf.txt \
              --model small_train_shuf_mbsgd --output small_test_output_mbsgd 
 
 sh ./eval_hdfs.sh small_test_output_mbsgd
