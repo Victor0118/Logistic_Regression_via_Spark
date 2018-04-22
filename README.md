@@ -1,8 +1,9 @@
 # tweets_sentiment
 
-spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD \
- target/project-1.0.jar --input /shared/au/small_train.txt \
- --model cs451-small-train-model
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifier target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model cs451-small-train-model
+
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifier target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model cs451-small-train-model --output small_test_shuf_output
+
 
 
 # Data Statistics
