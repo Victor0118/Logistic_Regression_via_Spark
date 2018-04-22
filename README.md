@@ -54,7 +54,7 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 
 # Performance of Learning Rate (delta) 
 
-|     delta    | SGD         | MBSGD         | SGD         |
+|     delta    | SGD         | MBSGD         | GD         |
 | ------------- |:-------------:|:-------------:|:-------------:|
 |   0.002    | 0.7424 | 
 |   0.005    | 0.7442 | 
@@ -64,7 +64,7 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 
 # Performance of Regularization (lambda)
 
-|     lambda    | SGD         | MBSGD         | SGD         |
+|     lambda    | SGD         | MBSGD         | GD         |
 | ------------- |:-------------:|:-------------:|:-------------:|
 |   0.0    | 0.7424 |
 |   0.00001    | 0.7423 |
