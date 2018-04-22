@@ -44,7 +44,7 @@ object TrainSentimentClassifierBGD {
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
 
-    for (iter <- 1 to args.epoch() * 1.0 / args.fraction()) {
+    for (iter <- 1 to (args.epoch() * 1.0 / args.fraction()).toInt) {
       val w = sc.broadcast(w_total)
 
       val gradient = inputFeature.sample(false, args.fraction()).mapPartitions(partition => {

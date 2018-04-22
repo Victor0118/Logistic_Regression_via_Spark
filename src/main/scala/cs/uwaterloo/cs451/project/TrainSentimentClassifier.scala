@@ -54,7 +54,7 @@ object TrainSentimentClassifier {
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
 
-    for (iter <- 1 to args.iteration()) {
+    for (iter <- 1 to args.epoch()) {
       var trained = inputFeature.groupByKey(1).flatMap(pair => {
         val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
         val w = scala.collection.mutable.Map[Int, Double]()
