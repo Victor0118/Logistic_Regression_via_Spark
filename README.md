@@ -3,6 +3,18 @@
 spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD \
  target/project-1.0.jar --input /shared/au/small_train.txt \
  --model cs451-small-train-model
+ 
+ 
+ ## GD
+ 
+ Train GD
+ ```
+ spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD target/project-1.0.jar --input /shared/au/small_train_shuf.txt --model small_train_shuf_gd
+ ```
+ Test GD
+ ```
+ spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifierGD target/project-1.0.jar --input /shared/au/small_test_shuf.txt --model small_train_shuf_gd --output small_test_output_gd
+ ```
 
 
 # Data Statistics
