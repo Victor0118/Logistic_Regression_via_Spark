@@ -9,16 +9,8 @@ import org.rogach.scallop._
   * Created by shipeng on 18-3-25.
   */
 
-class Conf_Trainer(args: Seq[String]) extends ScallopConf(args) {
-  mainOptions = Seq(input, model)
-  val input = opt[String](descr = "input path", required = true)
-  val model = opt[String](descr = "output path", required = true)
-  val shuffle = opt[Boolean](required = false, default = Some(false))
-  verify()
-}
 
-
-object TrainSentimentClassifier {
+object TrainSentimentClassifierGD {
   val log = Logger.getLogger(getClass().getName())
 
   def main(argv: Array[String]) {
@@ -27,7 +19,7 @@ object TrainSentimentClassifier {
     log.info("Model: " + args.model())
     log.info("Shuffle: " + args.shuffle())
 
-    val conf = new SparkConf().setAppName("Trainer")
+    val conf = new SparkConf().setAppName("TrainerGD")
     val sc = new SparkContext(conf)
     val textFile = sc.textFile(args.input())
     val outputDir = new Path(args.model())
@@ -49,7 +41,7 @@ object TrainSentimentClassifier {
 
     var w_total = scala.collection.mutable.Map[Int, Double]()
 
-    for (iter <- 1 to 10) {
+    //for (iter <- 1 to 10) {
       val w = sc.broadcast(w_total)
       val gradient = inputFeature.map(pair => {
         val g = scala.collection.mutable.Map[Int, Double]()
@@ -97,8 +89,7 @@ object TrainSentimentClassifier {
         )
       }
       )
-
-    }
+    //}
     sc.parallelize(w_total.toSeq).saveAsTextFile(args.model())
   }
 }
