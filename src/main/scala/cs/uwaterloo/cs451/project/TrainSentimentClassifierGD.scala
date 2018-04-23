@@ -56,6 +56,7 @@ object TrainSentimentClassifierGD {
         })
       }
       )
+      buffer.+=(f_counter)
       buffer.iterator
     }).collect().foreach( collection => {
       collection.keys.foreach(f=>{
