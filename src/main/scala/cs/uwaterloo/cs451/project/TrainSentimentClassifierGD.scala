@@ -12,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
   */
 
 
-object TrainSentimentClassifierMBSGD {
+object TrainSentimentClassifierGD {
   val log = Logger.getLogger(getClass().getName())
 
   def main(argv: Array[String]) {
@@ -25,7 +25,7 @@ object TrainSentimentClassifierMBSGD {
     log.info("fraction: " + args.fraction().toString())
     log.info("lr: " + args.lr().toString())
 
-    val conf = new SparkConf().setAppName("TrainerMBSGD")
+    val conf = new SparkConf().setAppName("TrainerGD")
     val sc = new SparkContext(conf)
     val textFile = sc.textFile(args.input())
     val outputDir = new Path(args.model())
