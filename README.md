@@ -71,7 +71,7 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 |   1    | 0.7178 | 
 |   0.1    | 0.7187 | 
 |   0.01    | 0.7327 | 
-|   0.001    |  | 
+|   0.001    | 0.7438 | 
 
 
 # Parameter Analysis on Learning Rate (delta) 
@@ -115,10 +115,27 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 | Avg \# of Characters     |  |  | | |
 | Avg \# of Terms     |  |  | | |
 
+
+# Best Performance
+
+|      | test_all      | test_small  |
+| ------------- |:-------------:|:-----:|
+| GD | OOM |  0.7268 |
+| SGD | OOM | 0.7457 |
+| MBSGD | 0.7529 |  0.7496 |
+
+
 # Training and Testing on All Data through MBSGD
 
 Train MBSGD
 ```
+
+spark-submit --deploy-mode client --num-executors 4 --executor-cores 4 --executor-memory 35G \
+             --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD \
+             target/project-1.0.jar --input /shared/au/train_all.txt \
+             --model train_all_gd --epoch 1 --regularization 0.0 --lr 0.002
+             
+             
 spark-submit --deploy-mode client --num-executors 4 --executor-cores 4 --executor-memory 35G \
              --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierMBSGD \
              target/project-1.0.jar --input /shared/au/train_all.txt \
@@ -129,9 +146,9 @@ Test MBSGD
 ```
 spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier \
              target/project-1.0.jar --input /shared/au/test_all.txt \
-             --model train_all_mbsgd --output train_all_output_mbsgd 
+             --model train_all_mbsgd --output test_all_output_mbsgd 
 
-sh ./eval_hdfs.sh train_all_output_mbsgd
+sh ./eval_hdfs.sh test_all_output_mbsgd
  ```
 
 # Reference
