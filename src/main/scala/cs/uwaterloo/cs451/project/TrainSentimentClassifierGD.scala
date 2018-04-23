@@ -38,7 +38,35 @@ object TrainSentimentClassifierGD {
       (0, (docid, pos, features, rand))
     })
 
-    val train_size = inputFeature.count() * 1.0
+    val feature_counter = scala.collection.mutable.Map[Int, Double]()
+    val feature_count = inputFeature.mapPartitions(partition => {
+      val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
+      val f_counter = scala.collection.mutable.Map[Int, Double]()
+      partition.foreach( pair => {
+        val instance = pair._2
+        val features = instance._3
+        features.foreach(f=> {
+          if (f_counter.contains(f)) {
+            f_counter(f) += 1
+          } else {
+            f_counter(f) = 1
+          }
+        })
+      }
+      )
+      buffer.iterator
+    }).collect().foreach( collection => {
+      collection.keys.foreach(f=>{
+        if (feature_counter.contains(f)) {
+          feature_counter(f) += collection(f)
+        } else {
+          feature_counter(f) = collection(f)
+        }
+      })
+    }
+
+    )
+
 
     if (args.shuffle()) {
       inputFeature = inputFeature.sortBy(pair => pair._2._4)
@@ -82,9 +110,9 @@ object TrainSentimentClassifierGD {
       ).collect().foreach(g => {
         g.keys.foreach(f => {
           if (w_total.contains(f)) {
-            w_total(f) += g(f) / train_size
+            w_total(f) += g(f) / feature_counter(f)
           } else {
-            w_total(f) = g(f) / train_size
+            w_total(f) = g(f) / feature_counter(f)
           }
         })
       }
