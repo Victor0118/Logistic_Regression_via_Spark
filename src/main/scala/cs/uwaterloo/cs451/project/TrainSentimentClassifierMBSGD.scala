@@ -53,7 +53,8 @@ object TrainSentimentClassifierMBSGD {
 
     for (iter <- 1 to (args.epoch() * 1.0 / args.fraction()).toInt) {
       val w = sc.broadcast(w_total)
-      val samples = inputFeature.sample(false, args.fraction())
+      val samples = inputFeature.sample(false, args.fraction(), iter)
+      samples.cache()
 
       val feature_counter = scala.collection.mutable.Map[Int, Double]()
       val feature_count = samples.mapPartitions(partition => {
@@ -64,9 +65,9 @@ object TrainSentimentClassifierMBSGD {
           val features = instance._3
           features.foreach(f=> {
             if (f_counter.contains(f)) {
-              f_counter(f) += 1
+              f_counter(f) += 1.0
             } else {
-              f_counter(f) = 1
+              f_counter(f) = 1.0
             }
           })
         }
