@@ -52,31 +52,52 @@ spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimen
 sh ./eval_hdfs.sh small_test_output_mbsgd
  ```
 
+# Parameter Test on Epoch Number (epoch) 
+`delta=0.002, lambda=0`
+
+|     epoch   |SGD         | MBSGD  (fraction=0.1)       |
+| ------------- |:-------------:|:-------------:|
+|   1    |  | 
+|   2    |  | 
+|   3    |  | 
+|   4    |  | 
+|   5    |  | 
+
+|     epoch   |GD         | 
+| ------------- |:-------------:|
+|   1    |  | 
+|   5    |  | 
+|   10    |  | 
+|   50    |  | 
+|   100    |  | 
+
+
 # Parameter Test on Batch Size (fraction) 
 `delta=0.002, epoch=3, lambda=0`
 
 |     fraction   | MBSGD         |
 | ------------- |:-------------:|
+|   1    | 0.7178 | 
 |   0.1    | 0.7187 | 
-|   0.01    |  | 
+|   0.01    | 0.7327 | 
 |   0.001    |  | 
 
 # Parameter Test on Learning Rate (delta) 
-`lambda=0, epoch=5, fraction=0.01`
+`lambda=0`
 
-|     delta    | SGD         | MBSGD         | GD         |
+|     delta    | SGD   (epoch=1)      | MBSGD (fraction=0.1, epoch=3)        | GD  (epoch=10)       |
 | ------------- |:-------------:|:-------------:|:-------------:|
 |   0.001    | 0.7404 | 
-|   0.002    | 0.7424 | 
+|   0.002    | 0.7424 | 0.7327 |
 |   0.005    | 0.7442 | 
 |   0.02    | 0.7302 | 
 
 
 
 # Parameter Test on Regularization (lambda)
-`delta=0.002, epoch=5, fraction=0.01`
+`delta=0.002`
 
-|     lambda    | SGD         | MBSGD         | GD         |
+|     lambda    | SGD  (epoch=1)      | MBSGD (fraction=0.1, epoch=3)        | GD (epoch=10)        |
 | ------------- |:-------------:|:-------------:|:-------------:|
 |   0.0    | 0.7424 |
 |   0.00001    | 0.7423 |
