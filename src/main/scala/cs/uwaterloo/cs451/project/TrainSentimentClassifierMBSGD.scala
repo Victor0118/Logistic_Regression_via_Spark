@@ -53,7 +53,8 @@ object TrainSentimentClassifierMBSGD {
 
     for (iter <- 1 to (args.epoch() * 1.0 / args.fraction()).toInt) {
       val w = sc.broadcast(w_total)
-      val samples = inputFeature.sample(false, args.fraction())
+      val samples = inputFeature.sample(false, args.fraction(), iter)
+      samples.cache()
 
       val temp_feature = scala.collection.mutable.Map[Int, Double]()
       val temp_counter = scala.collection.mutable.Map[Int, Double]()
