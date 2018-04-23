@@ -85,10 +85,10 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 # Parameter Test on Learning Rate (delta) 
 `lambda=0`
 
-|     delta    | SGD   (epoch=1)      | MBSGD (fraction=0.1, epoch=3)        | GD  (epoch=10)       |
+|     delta    | SGD   (epoch=1)      | MBSGD (fraction=0.1, epoch=3)        | GD  (epoch=5)       |
 | ------------- |:-------------:|:-------------:|:-------------:|
 |   0.001    | 0.7404 | 0.7173 |
-|   0.002    | 0.7424 | 0.7187 |
+|   0.002    | 0.7424 | 0.7187 | 0.7179| 
 |   0.005    | 0.7442 | 0.7231 | 
 |   0.01    |  | 0.7283 |
 |   0.02    | 0.7302 | 0.7349 |
@@ -121,6 +121,24 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 | \# of Pos       | 33,870,264 | 8,467,134 | 500,206 | 99,918 |
 | \# of Neg      | 33,869,640   |   8,467,758 | 499,794 | 100,082 |
 
+# Training and Testing on All Data through MBSGD
+
+Train MBSGD
+```
+spark-submit --deploy-mode client --num-executors 4 --executor-cores 4 --executor-memory 35G \
+             --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierMBSGD \
+             target/project-1.0.jar --input /shared/au/train_all.txt \
+             --model train_all_mbsgd --epoch 5 --regularization 0.0 --lr 0.02
+             
+```
+Test MBSGD
+```
+spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.ApplySentimentClassifier \
+             target/project-1.0.jar --input /shared/au/test_all.txt \
+             --model train_all_mbsgd --output train_all_output_mbsgd 
+
+sh ./eval_hdfs.sh train_all_output_mbsgd
+ ```
 
 # Reference
 
