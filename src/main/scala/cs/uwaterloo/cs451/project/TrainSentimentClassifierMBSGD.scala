@@ -110,7 +110,7 @@ object TrainSentimentClassifierMBSGD {
         if (w_total.contains(f)) {
           w_total(f) += temp_feature(f) / temp_counter(f)
         } else {
-          w_total(f) += temp_feature(f) / temp_counter(f)
+          w_total(f) = temp_feature(f) / temp_counter(f)
         }
       }
 
