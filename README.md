@@ -55,8 +55,8 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 # Parameter Analysis on Epoch Number (epoch) 
 `delta=0.002, lambda=0`
 
-|     epoch   |SGD         | MBSGD  (fraction=0.1)       |  GD         | 
-| ------------- |:-------------:|:-------------:|
+|     epoch    | SGD        | MBSGD (fraction=0.1)        | GD      |
+| ------------- |:-------------:|:-------------:|:-------------:|
 |   1    | 0.7424 |  0.7162 | 0.7177 | 
 |   2    | 0.7452 | 0.7179 | 0.7177 | 
 |   3    |  0.7424 | 0.7187 | 0.7178 | 
