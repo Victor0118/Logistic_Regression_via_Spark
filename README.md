@@ -41,7 +41,7 @@ sh ./eval_hdfs.sh small_test_output_sgd
 ```
 spark-submit --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierMBSGD \
              target/project-1.0.jar --input /shared/au/small_train_shuf.txt \
-             --model small_train_shuf_mbsgd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.01
+             --model small_train_shuf_mbsgd --epoch 5 --regularization 0.0001 --lr 0.002 --fraction 0.1
 ```
 Test MBSGD
 ```
@@ -80,27 +80,28 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 |   1    | 0.7178 | 
 |   0.1    | 0.7187 | 
 |   0.01    | 0.7327 | 
-|   0.001    |  | 
+
 
 # Parameter Test on Learning Rate (delta) 
 `lambda=0`
 
 |     delta    | SGD   (epoch=1)      | MBSGD (fraction=0.1, epoch=3)        | GD  (epoch=10)       |
 | ------------- |:-------------:|:-------------:|:-------------:|
-|   0.001    | 0.7404 | 
-|   0.002    | 0.7424 | 0.7327 |
-|   0.005    | 0.7442 | 
-|   0.02    | 0.7302 | 
-
+|   0.001    | 0.7404 | 0.7173 |
+|   0.002    | 0.7424 | 0.7187 |
+|   0.005    | 0.7442 | 0.7231 | 
+|   0.01    |  | 0.7283 |
+|   0.02    | 0.7302 | 0.7349 |
+|   0.05    |  |  0.7444 |
+|   0.1    |  |   |
 
 
 # Parameter Test on Regularization (lambda)
-`delta=0.002`
 
-|     lambda    | SGD  (epoch=1)      | MBSGD (fraction=0.1, epoch=3)        | GD (epoch=10)        |
+|     lambda    | SGD  (epoch=1, delta=0.002)      | MBSGD (fraction=0.1, delta=0.01, epoch=3)        | GD (epoch=10)        |
 | ------------- |:-------------:|:-------------:|:-------------:|
-|   0.0    | 0.7424 |
-|   0.00001    | 0.7423 |
+|   0.0    | 0.7424 | 0.7283| 
+|   0.00001    | 0.7423 | 
 |   0.0001    | 0.7438 |
 |   0.001    | 0.7438 |
 |   0.005    | 0.7438 |
