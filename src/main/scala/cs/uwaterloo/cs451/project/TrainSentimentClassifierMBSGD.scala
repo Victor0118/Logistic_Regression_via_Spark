@@ -53,8 +53,40 @@ object TrainSentimentClassifierMBSGD {
 
     for (iter <- 1 to (args.epoch() * 1.0 / args.fraction()).toInt) {
       val w = sc.broadcast(w_total)
+      val samples = inputFeature.sample(false, args.fraction())
 
-      val gradient = inputFeature.sample(false, args.fraction()).mapPartitions(partition => {
+      val feature_counter = scala.collection.mutable.Map[Int, Double]()
+      val feature_count = samples.mapPartitions(partition => {
+        val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
+        val f_counter = scala.collection.mutable.Map[Int, Double]()
+        partition.foreach( pair => {
+          val instance = pair._2
+          val features = instance._3
+          features.foreach(f=> {
+            if (f_counter.contains(f)) {
+              f_counter(f) += 1
+            } else {
+              f_counter(f) = 1
+            }
+          })
+        }
+        )
+        buffer.+=(f_counter)
+        buffer.iterator
+      }).collect().foreach( collection => {
+        collection.keys.foreach(f=>{
+          if (feature_counter.contains(f)) {
+            feature_counter(f) += collection(f)
+          } else {
+            feature_counter(f) = collection(f)
+          }
+        })
+      }
+
+      )
+
+      val gradient = samples.mapPartitions(partition => {
+
         val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
         val g = scala.collection.mutable.Map[Int, Double]()
         def sentiment(features: Array[Int]): Double = {
@@ -84,9 +116,9 @@ object TrainSentimentClassifierMBSGD {
       ).collect().foreach(g => {
         g.keys.foreach(f => {
           if (w_total.contains(f)) {
-            w_total(f) += g(f) / batch_size
+            w_total(f) += g(f) / feature_counter(f)
           } else {
-            w_total(f) = g(f) / batch_size
+            w_total(f) = g(f) / feature_counter(f)
           }
         })
       }
