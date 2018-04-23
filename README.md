@@ -85,7 +85,9 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 |   0.01    | 0.7457 | 0.7283 |0.7192 | 
 |   0.02    | | 0.7349 |
 |   0.05    |0.7234  |  0.7444 | 0.7268 |
-|   0.1    |  |   |
+|   0.1    | 0.6757 |  0.7496 |0.7275
+|   0.2    | 0. |  0.7438 |0.
+|   0.5    |  | 0.6783  |0.6008
 
 
 # Parameter Analysis on Regularization (lambda)
@@ -120,7 +122,7 @@ Train MBSGD
 spark-submit --deploy-mode client --num-executors 4 --executor-cores 4 --executor-memory 35G \
              --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierMBSGD \
              target/project-1.0.jar --input /shared/au/train_all.txt \
-             --model train_all_mbsgd --epoch 5 --regularization 0.0 --lr 0.02  --fraction 0.01
+             --model train_all_mbsgd --epoch 5 --regularization 0.0 --lr 0.02  --fraction 0.1
              
 ```
 Test MBSGD
