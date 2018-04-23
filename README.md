@@ -1,5 +1,20 @@
 # Running Instruction
 
+### Dataset Building
+Run the following scripts consecutively:
+```
+init.py
+tag_tweets_py2.py
+index.py
+split.py
+combine_data.sh
+```
+
+### Compile Spark Project
+```
+mvn clean package
+```
+
 ### GD
 
 Train GD
@@ -86,8 +101,8 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 |   0.02    | | 0.7349 |
 |   0.05    |0.7234  |  0.7444 | 0.7268 |
 |   0.1    | 0.6757 |  0.7496 |0.7275
-|   0.2    | 0. |  0.7438 |0.
-|   0.5    |  | 0.6783  |0.6008
+|   0.2    | 0.6670 |  0.7438 |0.7345
+|   0.5    |  0.6937 | 0.6783  |0.6008
 
 
 # Parameter Analysis on Regularization (lambda)
