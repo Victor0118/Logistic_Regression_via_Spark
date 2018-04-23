@@ -122,25 +122,17 @@ sh ./eval_hdfs.sh small_test_output_mbsgd
 | ------------- |:-------------:|:-----:|
 | GD | OOM |  0.7268 |
 | SGD | OOM | 0.7457 |
-| MBSGD | 0.7529 |  0.7496 |
+| MBSGD | 0.7529 (fraction = 0.01) / OOM (fraction = 0.1)  |  0.7496 |
 
 
 # Training and Testing on All Data through MBSGD
 
 Train MBSGD
-```
-
-spark-submit --deploy-mode client --num-executors 4 --executor-cores 4 --executor-memory 35G \
-             --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierGD \
-             target/project-1.0.jar --input /shared/au/train_all.txt \
-             --model train_all_gd --epoch 1 --regularization 0.0 --lr 0.002
-             
-             
+```             
 spark-submit --deploy-mode client --num-executors 4 --executor-cores 4 --executor-memory 35G \
              --driver-memory 2g --class ca.uwaterloo.cs451.project.TrainSentimentClassifierMBSGD \
              target/project-1.0.jar --input /shared/au/train_all.txt \
-             --model train_all_mbsgd --epoch 5 --regularization 0.0 --lr 0.02  --fraction 0.1
-             
+             --model train_all_mbsgd --epoch 5 --regularization 0.0 --lr 0.02  --fraction 0.01      
 ```
 Test MBSGD
 ```
