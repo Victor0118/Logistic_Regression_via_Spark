@@ -55,40 +55,15 @@ object TrainSentimentClassifierMBSGD {
       val w = sc.broadcast(w_total)
       val samples = inputFeature.sample(false, args.fraction())
 
-      val feature_counter = scala.collection.mutable.Map[Int, Double]()
-      val feature_count = samples.mapPartitions(partition => {
-        val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
-        val f_counter = scala.collection.mutable.Map[Int, Double]()
-        partition.foreach( pair => {
-          val instance = pair._2
-          val features = instance._3
-          features.foreach(f=> {
-            if (f_counter.contains(f)) {
-              f_counter(f) += 1
-            } else {
-              f_counter(f) = 1
-            }
-          })
-        }
-        )
-        buffer.+=(f_counter)
-        buffer.iterator
-      }).collect().foreach( collection => {
-        collection.keys.foreach(f=>{
-          if (feature_counter.contains(f)) {
-            feature_counter(f) += collection(f)
-          } else {
-            feature_counter(f) = collection(f)
-          }
-        })
-      }
+      val temp_feature = scala.collection.mutable.Map[Int, Double]()
+      val temp_counter = scala.collection.mutable.Map[Int, Double]()
 
-      )
 
       val gradient = samples.mapPartitions(partition => {
 
-        val buffer = ArrayBuffer[scala.collection.mutable.Map[Int, Double]]()
+        val buffer = ArrayBuffer[(scala.collection.mutable.Map[Int, Double], scala.collection.mutable.Map[Int, Double])]()
         val g = scala.collection.mutable.Map[Int, Double]()
+        val counter = scala.collection.mutable.Map[Int, Double]()
         def sentiment(features: Array[Int]): Double = {
           var score = 0d
           features.foreach(f => if (w.value.contains(f)) score += w.value(f))
@@ -104,24 +79,40 @@ object TrainSentimentClassifierMBSGD {
           features.foreach(f => {
             if (g.contains(f)) {
               g(f) += (pos - prob - 2.0 * w.value.getOrElse(f, 0.0) * reg) * delta
+              counter(f) += 1
             } else {
               g(f) = (pos - prob - 2.0 * w.value.getOrElse(f, 0.0) * reg) * delta
+              counter(f) = 1
             }
           })
 
         })
-        buffer.+=(g)
+        buffer.+=((g, counter))
         buffer.iterator
       }
-      ).collect().foreach(g => {
+      ).collect().foreach(pair => {
+        val g = pair._1
+        val c = pair._2
         g.keys.foreach(f => {
-          if (w_total.contains(f)) {
-            w_total(f) += g(f) / feature_counter(f)
+          if (temp_feature.contains(f)) {
+            temp_feature(f) += g(f)
+            temp_counter(f) += c(f)
           } else {
-            w_total(f) = g(f) / feature_counter(f)
+            temp_feature(f) = g(f)
+            temp_counter(f) = c(f)
           }
         })
       }
+      )
+
+      temp_feature.keys.foreach( f=> {
+        if (w_total.contains(f)) {
+          w_total(f) += temp_feature(f) / temp_counter(f)
+        } else {
+          w_total(f) += temp_feature(f) / temp_counter(f)
+        }
+      }
+
       )
     }
     sc.parallelize(w_total.toSeq).coalesce(1).saveAsTextFile(args.model())
